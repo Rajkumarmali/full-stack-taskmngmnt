@@ -46,7 +46,7 @@ function CreatePost(props) {
                         name="title"
                         placeholder = "Ex. Title "
                     />
-                    <label>Post</label>
+                    <label>Description</label>
                     <ErrorMessage name="Post" component="span" />
                     <Field 
                        autocomplet="off"
@@ -54,6 +54,8 @@ function CreatePost(props) {
                         name="postText"
                         placeholder = "Ex. post "
                     />
+                    
+                    
                     
                    
                     <button type='submit'>Submit</button>

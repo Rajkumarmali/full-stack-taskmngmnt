@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Posts = require("../models/Posts"); // Assuming you have a Mongoose model defined for Posts
+const { validateToken } = require("../middlewares/AuthMiddleware");
 
 router.get("/", async (req, res) => {
   try {
@@ -11,30 +12,31 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get('/byId/:id',async (req, res) => {
   const id = req.params.id;
+
   try {
-    const post = await Posts.findById(id);
+    const post = await Posts.findOne({ _id: id });
+
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found.' });
+    }
+
     res.json(post);
   } catch (error) {
-    res.status(404).json({ message: "Post not found." });
+    console.error('Error fetching post:', error);
+    res.status(500).json({ message: 'Error fetching post.' });
   }
 });
 
-router.post("/", async (req, res) => {
-  const post = req.body;
+router.post ("/",validateToken, async (req, res) => {
+  const post  = req.body;
+  post.username = req.user.username;
 
-  // post.username = req.user.username;
-
-  console.log("he",post);
-
-  try {
-    const createdPost = await Posts.create(post);
-    res.json(createdPost);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating post." });
-  }
+  await Posts.create(post);
+  res.json(post);
 });
+
 
 
 router.put("/title", async (req, res) => {

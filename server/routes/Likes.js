@@ -1,14 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const Likes = require("../models/Likes"); // Assuming you have a Mongoose model defined for Likes
+const Likes = require('../models/Likes');
 const { validateToken } = require("../middlewares/AuthMiddleware");
 
-router.post("/", validateToken, async (req, res) => {
+router.post('/', validateToken, async (req, res) => {
   const { PostId } = req.body;
   const UserId = req.user.id;
 
   try {
-    const found = await Likes.findOne({ PostId: PostId, UserId: UserId });
+    const found = await Likes.findOne({
+      PostId: PostId,
+      UserId: UserId,
+    });
 
     if (!found) {
       await Likes.create({ PostId: PostId, UserId: UserId });
@@ -18,8 +21,9 @@ router.post("/", validateToken, async (req, res) => {
       res.json({ liked: false });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error processing the like." });
+    res.status(500).json({ message: 'Error processing the like.' });
   }
 });
+
 
 module.exports = router;
